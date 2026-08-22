@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">ChatApp</string>
+    <string name="nombre_desarrollador">Red System</string>
+
+    <string name="Btn_ir_registro">Registrarme</string>
+    <string name="Btn_ir_logeo">Ingresar</string>
+
+    <string name="R_Et_nombre_usuario">Nombre de usuario</string>
+    <string name="R_Et_email">Correo electronico</string>
+    <string name="R_Et_password">Contraseña</string>
+    <string name="R_Et_r_password">Repita su contraseña</string>
+    <string name="Btn_registrar">Registrar</string>
+    
+    
+    <string name="menu_salir">Cerrar sesión</string>
+
+    <!-- Login Strings -->
+    <string name="txt_bienvenida_login">¡Bienvenido de nuevo!</string>
+    <string name="L_Et_email">Correo electrónico</string>
+    <string name="L_Et_password">Contraseña</string>
+    <string name="Btn_login">Iniciar sesión</string>
+    <string name="txt_no_tienes_cuenta">¿No tienes cuenta? Regístrate</string>
+    <string name="content_desc_logo">Logo de la aplicación</string>
+</resources>

@@ -1,0 +1,8 @@
+- [x] Crear el modelo de datos `Chat`
+- [x] Diseñar los layouts `item_chat_izquierda.xml` y `item_chat_derecha.xml`
+- [x] Diseñar el layout `activity_chat.xml`
+- [x] Crear el adaptador `AdapterChat` (soporte para mensajes enviados/recibidos)
+- [x] Configurar click en `AdapterUsuario.kt` para abrir el chat
+- [x] Implementar `ChatActivity.kt` (Enviar y Recibir mensajes)
+- [x] Registrar `ChatActivity` en `AndroidManifest.xml`
+- [x] Verificar funcionamiento del chat en tiempo real
