@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">API App</string>
+    <style name="Theme.Ejercicio_appAndroid" parent="Theme.Material3.DayNight.NoActionBar">
+    </style>
+</resources>
