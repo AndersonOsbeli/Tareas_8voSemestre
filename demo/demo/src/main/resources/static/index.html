@@ -1,0 +1,979 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Gestión de Alumnos | Sistema CRUD</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg-primary: #0f172a;
+      --bg-secondary: #1e293b;
+      --bg-card: rgba(30, 41, 59, 0.75);
+      --border-color: rgba(255, 255, 255, 0.08);
+      --border-focus: #6366f1;
+      --text-primary: #f8fafc;
+      --text-secondary: #94a3b8;
+      --text-muted: #64748b;
+      --accent: #6366f1;
+      --accent-hover: #4f46e5;
+      --accent-glow: rgba(99, 102, 241, 0.25);
+      --success: #10b981;
+      --success-bg: rgba(16, 185, 129, 0.15);
+      --danger: #ef4444;
+      --danger-bg: rgba(239, 68, 68, 0.15);
+      --warning: #f59e0b;
+      --warning-bg: rgba(245, 158, 11, 0.15);
+      --radius-sm: 8px;
+      --radius-md: 14px;
+      --radius-lg: 20px;
+      --shadow-lg: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 8px 10px -6px rgba(0, 0, 0, 0.5);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    body {
+      background: radial-gradient(circle at top right, #1e1b4b, #0f172a 60%, #020617);
+      color: var(--text-primary);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      padding: 24px;
+      box-sizing: border-box;
+    }
+
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+    }
+
+    /* Header */
+    header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 28px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .logo-area {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background: linear-gradient(135deg, #6366f1, #a855f7);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
+      box-shadow: 0 4px 15px var(--accent-glow);
+    }
+
+    .logo-text h1 {
+      font-size: 24px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      background: linear-gradient(90deg, #ffffff, #cbd5e1);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .logo-text p {
+      font-size: 13px;
+      color: var(--text-secondary);
+    }
+
+    .header-actions {
+      display: flex;
+      gap: 12px;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 10px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      border: 1px solid transparent;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background: linear-gradient(135deg, #6366f1, #4f46e5);
+      color: white;
+      box-shadow: 0 4px 12px var(--accent-glow);
+    }
+
+    .btn-primary:hover {
+      background: linear-gradient(135deg, #4f46e5, #4338ca);
+      transform: translateY(-1px);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.05);
+      border-color: var(--border-color);
+      color: var(--text-primary);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn-danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background: #dc2626;
+    }
+
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 12px;
+      border-radius: 6px;
+    }
+
+    /* Stats Grid */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 18px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      backdrop-filter: blur(12px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-lg);
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      border-color: rgba(255, 255, 255, 0.15);
+    }
+
+    .stat-info span {
+      font-size: 13px;
+      color: var(--text-secondary);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .stat-info h3 {
+      font-size: 28px;
+      font-weight: 700;
+      margin-top: 4px;
+      color: var(--text-primary);
+    }
+
+    .stat-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+    }
+
+    .icon-indigo { background: rgba(99, 102, 241, 0.15); color: #818cf8; }
+    .icon-emerald { background: rgba(16, 185, 129, 0.15); color: #34d399; }
+    .icon-rose { background: rgba(239, 68, 68, 0.15); color: #f87171; }
+    .icon-amber { background: rgba(245, 158, 11, 0.15); color: #fbbf24; }
+
+    /* Main Content Card */
+    .card {
+      background: var(--bg-card);
+      backdrop-filter: blur(16px);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Toolbar */
+    .table-toolbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .search-filter-group {
+      display: flex;
+      gap: 12px;
+      flex: 1;
+      max-width: 600px;
+    }
+
+    .search-input-wrapper {
+      position: relative;
+      flex: 1;
+    }
+
+    .search-input-wrapper input {
+      width: 100%;
+      padding: 10px 14px 10px 38px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input-wrapper input:focus {
+      border-color: var(--border-focus);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-muted);
+      font-size: 14px;
+    }
+
+    .select-filter {
+      padding: 10px 14px;
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .select-filter option {
+      background: #0f172a;
+    }
+
+    /* Table */
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+    }
+
+    th {
+      padding: 14px 16px;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      border-bottom: 1px solid var(--border-color);
+      background: rgba(15, 23, 42, 0.3);
+    }
+
+    td {
+      padding: 16px;
+      font-size: 14px;
+      border-bottom: 1px solid var(--border-color);
+      vertical-align: middle;
+    }
+
+    tr:hover td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    .clave-badge {
+      font-family: monospace;
+      font-weight: 700;
+      color: #818cf8;
+      background: rgba(99, 102, 241, 0.1);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 13px;
+    }
+
+    .badge-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 4px 10px;
+      border-radius: 9999px;
+      font-size: 12px;
+      font-weight: 600;
+    }
+
+    .badge-pass {
+      background: var(--success-bg);
+      color: #34d399;
+      border: 1px solid rgba(16, 185, 129, 0.3);
+    }
+
+    .badge-fail {
+      background: var(--danger-bg);
+      color: #f87171;
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
+    .actions-cell {
+      display: flex;
+      gap: 8px;
+    }
+
+    .btn-icon {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid var(--border-color);
+      color: var(--text-secondary);
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-icon:hover {
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--text-primary);
+    }
+
+    .btn-icon.delete:hover {
+      background: var(--danger-bg);
+      color: #f87171;
+      border-color: rgba(239, 68, 68, 0.3);
+    }
+
+    .empty-state {
+      text-align: center;
+      padding: 48px 16px;
+      color: var(--text-muted);
+    }
+
+    .empty-state-icon {
+      font-size: 40px;
+      margin-bottom: 12px;
+    }
+
+    /* Modal */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(6px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 1000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease;
+      padding: 16px;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .modal-card {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      width: 100%;
+      max-width: 480px;
+      box-shadow: var(--shadow-lg);
+      transform: scale(0.95);
+      transition: transform 0.2s ease;
+      overflow: hidden;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: scale(1);
+    }
+
+    .modal-header {
+      padding: 20px 24px;
+      border-bottom: 1px solid var(--border-color);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-header h2 {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 20px;
+      cursor: pointer;
+      line-height: 1;
+    }
+
+    .modal-close:hover {
+      color: var(--text-primary);
+    }
+
+    .modal-body {
+      padding: 24px;
+    }
+
+    .form-group {
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text-secondary);
+      margin-bottom: 8px;
+    }
+
+    .form-group input, .form-group select {
+      width: 100%;
+      padding: 10px 14px;
+      background: #0f172a;
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group input:focus, .form-group select:focus {
+      border-color: var(--border-focus);
+    }
+
+    .form-group small {
+      display: block;
+      color: var(--text-muted);
+      font-size: 12px;
+      margin-top: 4px;
+    }
+
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--border-color);
+      display: flex;
+      justify-content: flex-end;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.4);
+    }
+
+    /* Toast Notification */
+    .toast-container {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 2000;
+    }
+
+    .toast {
+      background: #1e293b;
+      border: 1px solid var(--border-color);
+      padding: 12px 18px;
+      border-radius: var(--radius-sm);
+      color: var(--text-primary);
+      font-size: 14px;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.3s ease;
+      min-width: 260px;
+    }
+
+    .toast.success { border-left: 4px solid var(--success); }
+    .toast.error { border-left: 4px solid var(--danger); }
+
+    @keyframes slideIn {
+      from { transform: translateX(100%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <!-- Header -->
+    <header>
+      <div class="logo-area">
+        <div class="logo-icon">🎓</div>
+        <div class="logo-text">
+          <h1>Sistema de Alumnos</h1>
+          <p>Módulo CRUD: Nombre, Clave, Sección y Nota Final</p>
+        </div>
+      </div>
+      <div class="header-actions">
+        <button id="btnRecargar" class="btn btn-secondary" title="Recargar datos">
+          🔄 Recargar
+        </button>
+        <button id="btnNuevoAlumno" class="btn btn-primary">
+          ➕ Nuevo Alumno
+        </button>
+      </div>
+    </header>
+
+    <!-- Stats Cards -->
+    <section class="stats-grid">
+      <div class="stat-card">
+        <div class="stat-info">
+          <span>Total Alumnos</span>
+          <h3 id="statTotal">0</h3>
+        </div>
+        <div class="stat-icon icon-indigo">👥</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <span>Promedio General</span>
+          <h3 id="statPromedio">0.0</h3>
+        </div>
+        <div class="stat-icon icon-amber">📊</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <span>Aprobados (≥ 61)</span>
+          <h3 id="statAprobados">0</h3>
+        </div>
+        <div class="stat-icon icon-emerald">✅</div>
+      </div>
+
+      <div class="stat-card">
+        <div class="stat-info">
+          <span>Reprobados (< 61)</span>
+          <h3 id="statReprobados">0</h3>
+        </div>
+        <div class="stat-icon icon-rose">❌</div>
+      </div>
+    </section>
+
+    <!-- Table Card -->
+    <main class="card">
+      <div class="table-toolbar">
+        <div class="search-filter-group">
+          <div class="search-input-wrapper">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="filtroTexto" placeholder="Buscar por nombre o clave...">
+          </div>
+          <select id="filtroSeccion" class="select-filter">
+            <option value="">Todas las secciones</option>
+          </select>
+        </div>
+        <div id="registroCount" style="color: var(--text-muted); font-size: 13px;">
+          Mostrando 0 registros
+        </div>
+      </div>
+
+      <div class="table-responsive">
+        <table>
+          <thead>
+            <tr>
+              <th style="width: 100px;">Clave</th>
+              <th>Nombre del Alumno</th>
+              <th style="width: 130px;">Sección</th>
+              <th style="width: 140px;">Nota Final</th>
+              <th style="width: 140px;">Estado</th>
+              <th style="width: 110px; text-align: right;">Acciones</th>
+            </tr>
+          </thead>
+          <tbody id="tablaAlumnosBody">
+            <!-- Registros dinámicos -->
+          </tbody>
+        </table>
+      </div>
+
+      <div id="emptyState" class="empty-state" style="display: none;">
+        <div class="empty-state-icon">📋</div>
+        <h3>No se encontraron alumnos</h3>
+        <p>No hay registros coincidentes con los filtros aplicados.</p>
+      </div>
+    </main>
+  </div>
+
+  <!-- Modal Crear / Editar -->
+  <div id="modalAlumno" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2 id="modalTitulo">Nuevo Alumno</h2>
+        <button id="modalCerrar" class="modal-close">&times;</button>
+      </div>
+      <form id="formAlumno">
+        <div class="modal-body">
+          <input type="hidden" id="editandoModo" value="false">
+
+          <div class="form-group">
+            <label for="alumnoClave">Clave (Identificador numérico)*</label>
+            <input type="number" id="alumnoClave" required placeholder="Ej. 1, 2, 105" min="1">
+            <small id="claveHelp">La clave es el identificador único del estudiante.</small>
+          </div>
+
+          <div class="form-group">
+            <label for="alumnoNombre">Nombre Completo*</label>
+            <input type="text" id="alumnoNombre" required placeholder="Ej. María Fernanda Morales">
+          </div>
+
+          <div class="form-group">
+            <label for="alumnoSeccion">Sección*</label>
+            <input type="text" id="alumnoSeccion" required placeholder="Ej. A, B o C" maxlength="10">
+          </div>
+
+          <div class="form-group">
+            <label for="alumnoNota">Nota Final (0 - 100)*</label>
+            <input type="number" id="alumnoNota" required placeholder="Ej. 85.5" min="0" max="100" step="0.1">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" id="btnCancelarModal" class="btn btn-secondary">Cancelar</button>
+          <button type="submit" id="btnGuardarModal" class="btn btn-primary">Guardar</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal Confirmar Eliminación -->
+  <div id="modalEliminar" class="modal-overlay">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h2>Confirmar Eliminación</h2>
+        <button id="modalEliminarCerrar" class="modal-close">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p>¿Estás seguro de que deseas eliminar al alumno <strong id="eliminarNombre"></strong> (Clave: <span id="eliminarClave"></span>)?</p>
+        <p style="color: var(--text-muted); font-size: 13px; margin-top: 8px;">Esta acción no se puede deshacer.</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" id="btnCancelarEliminar" class="btn btn-secondary">Cancelar</button>
+        <button type="button" id="btnConfirmarEliminar" class="btn btn-danger">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Container -->
+  <div id="toastContainer" class="toast-container"></div>
+
+  <script>
+    const API_URL = '/api/alumnos';
+
+    let alumnosData = [];
+    let claveParaEliminar = null;
+
+    // Elementos DOM
+    const tablaBody = document.getElementById('tablaAlumnosBody');
+    const emptyState = document.getElementById('emptyState');
+    const filtroTexto = document.getElementById('filtroTexto');
+    const filtroSeccion = document.getElementById('filtroSeccion');
+    const registroCount = document.getElementById('registroCount');
+
+    // Stats
+    const statTotal = document.getElementById('statTotal');
+    const statPromedio = document.getElementById('statPromedio');
+    const statAprobados = document.getElementById('statAprobados');
+    const statReprobados = document.getElementById('statReprobados');
+
+    // Modales
+    const modalAlumno = document.getElementById('modalAlumno');
+    const formAlumno = document.getElementById('formAlumno');
+    const modalTitulo = document.getElementById('modalTitulo');
+    const editandoModo = document.getElementById('editandoModo');
+    const alumnoClave = document.getElementById('alumnoClave');
+    const alumnoNombre = document.getElementById('alumnoNombre');
+    const alumnoSeccion = document.getElementById('alumnoSeccion');
+    const alumnoNota = document.getElementById('alumnoNota');
+    const claveHelp = document.getElementById('claveHelp');
+
+    const modalEliminar = document.getElementById('modalEliminar');
+    const eliminarNombre = document.getElementById('eliminarNombre');
+    const eliminarClave = document.getElementById('eliminarClave');
+    const btnConfirmarEliminar = document.getElementById('btnConfirmarEliminar');
+
+    // Notificaciones Toast
+    function showToast(mensaje, tipo = 'success') {
+      const container = document.getElementById('toastContainer');
+      const toast = document.createElement('div');
+      toast.className = `toast ${tipo}`;
+      toast.innerHTML = `<span>${tipo === 'success' ? '✅' : '⚠️'}</span><span>${mensaje}</span>`;
+      container.appendChild(toast);
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateX(100%)';
+        setTimeout(() => toast.remove(), 300);
+      }, 3500);
+    }
+
+    // Cargar alumnos desde el Backend (GET /api/alumnos)
+    async function cargarAlumnos() {
+      try {
+        const res = await fetch(API_URL);
+        if (!res.ok) throw new Error('Error al conectar con la API');
+        alumnosData = await res.json();
+        actualizarOpcionesSeccion();
+        renderTabla();
+        actualizarEstadisticas();
+      } catch (err) {
+        showToast('Error al cargar la lista de alumnos: ' + err.message, 'error');
+      }
+    }
+
+    // Actualizar select de secciones
+    function actualizarOpcionesSeccion() {
+      const valorSeleccionado = filtroSeccion.value;
+      const secciones = [...new Set(alumnosData.map(a => a.seccion).filter(Boolean))].sort();
+      filtroSeccion.innerHTML = '<option value="">Todas las secciones</option>';
+      secciones.forEach(sec => {
+        const opt = document.createElement('option');
+        opt.value = sec;
+        opt.textContent = `Sección ${sec}`;
+        if (sec === valorSeleccionado) opt.selected = true;
+        filtroSeccion.appendChild(opt);
+      });
+    }
+
+    // Actualizar Estadísticas
+    function actualizarEstadisticas() {
+      const total = alumnosData.length;
+      statTotal.textContent = total;
+
+      if (total === 0) {
+        statPromedio.textContent = '0.0';
+        statAprobados.textContent = '0';
+        statReprobados.textContent = '0';
+        return;
+      }
+
+      const suma = alumnosData.reduce((acc, a) => acc + (Number(a.notaFinal) || 0), 0);
+      const promedio = (suma / total).toFixed(1);
+      const aprobados = alumnosData.filter(a => Number(a.notaFinal) >= 61).length;
+      const reprobados = total - aprobados;
+
+      statPromedio.textContent = promedio;
+      statAprobados.textContent = aprobados;
+      statReprobados.textContent = reprobados;
+    }
+
+    // Renderizar Tabla con filtros
+    function renderTabla() {
+      const texto = filtroTexto.value.toLowerCase().trim();
+      const seccion = filtroSeccion.value;
+
+      const filtrados = alumnosData.filter(a => {
+        const coincideTexto = (a.nombre && a.nombre.toLowerCase().includes(texto)) ||
+                              (a.clave && a.clave.toString().includes(texto));
+        const coincideSeccion = !seccion || a.seccion === seccion;
+        return coincideTexto && coincideSeccion;
+      });
+
+      registroCount.textContent = `Mostrando ${filtrados.length} de ${alumnosData.length} registros`;
+      tablaBody.innerHTML = '';
+
+      if (filtrados.length === 0) {
+        emptyState.style.display = 'block';
+        return;
+      }
+
+      emptyState.style.display = 'none';
+
+      filtrados.forEach(alumno => {
+        const tr = document.createElement('tr');
+        const nota = Number(alumno.notaFinal) || 0;
+        const aprobado = nota >= 61;
+
+        tr.innerHTML = `
+          <td><span class="clave-badge">#${alumno.clave}</span></td>
+          <td style="font-weight: 600;">${alumno.nombre || 'Sin nombre'}</td>
+          <td><span style="font-weight: 500; color: var(--text-secondary);">${alumno.seccion || '-'}</span></td>
+          <td style="font-weight: 700; font-size: 15px;">${nota.toFixed(1)}</td>
+          <td>
+            <span class="badge-status ${aprobado ? 'badge-pass' : 'badge-fail'}">
+              ${aprobado ? '● Aprobado' : '● Reprobado'}
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <div class="actions-cell" style="justify-content: flex-end;">
+              <button class="btn-icon" onclick="abrirEditar(${alumno.clave})" title="Editar">✏️</button>
+              <button class="btn-icon delete" onclick="abrirEliminar(${alumno.clave}, '${escapeQuotes(alumno.nombre)}')" title="Eliminar">🗑️</button>
+            </div>
+          </td>
+        `;
+        tablaBody.appendChild(tr);
+      });
+    }
+
+    function escapeQuotes(str) {
+      if (!str) return '';
+      return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+    }
+
+    // Abrir Modal Crear
+    document.getElementById('btnNuevoAlumno').addEventListener('click', () => {
+      formAlumno.reset();
+      editandoModo.value = 'false';
+      modalTitulo.textContent = 'Nuevo Alumno';
+      alumnoClave.disabled = false;
+      claveHelp.textContent = 'Ingresa un número único para identificar al alumno.';
+      modalAlumno.classList.add('active');
+      alumnoClave.focus();
+    });
+
+    // Abrir Modal Editar
+    window.abrirEditar = function(clave) {
+      const alumno = alumnosData.find(a => a.clave === clave);
+      if (!alumno) return;
+
+      editandoModo.value = 'true';
+      modalTitulo.textContent = 'Editar Alumno #' + alumno.clave;
+      alumnoClave.value = alumno.clave;
+      alumnoClave.disabled = true;
+      claveHelp.textContent = 'La clave no se puede modificar al editar.';
+      alumnoNombre.value = alumno.nombre;
+      alumnoSeccion.value = alumno.seccion;
+      alumnoNota.value = alumno.notaFinal;
+
+      modalAlumno.classList.add('active');
+      alumnoNombre.focus();
+    };
+
+    // Cerrar Modales
+    function cerrarModales() {
+      modalAlumno.classList.remove('active');
+      modalEliminar.classList.remove('active');
+    }
+
+    document.getElementById('modalCerrar').addEventListener('click', cerrarModales);
+    document.getElementById('btnCancelarModal').addEventListener('click', cerrarModales);
+    document.getElementById('modalEliminarCerrar').addEventListener('click', cerrarModales);
+    document.getElementById('btnCancelarEliminar').addEventListener('click', cerrarModales);
+
+    // Guardar (POST o PUT)
+    formAlumno.addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const clave = parseInt(alumnoClave.value);
+      const nombre = alumnoNombre.value.trim();
+      const seccion = alumnoSeccion.value.trim().toUpperCase();
+      const notaFinal = parseFloat(alumnoNota.value);
+
+      const esEdicion = editandoModo.value === 'true';
+
+      const payload = {
+        clave: clave,
+        nombre: nombre,
+        seccion: seccion,
+        notaFinal: notaFinal
+      };
+
+      try {
+        let res;
+        if (esEdicion) {
+          // PUT /api/alumnos/{clave}
+          res = await fetch(`${API_URL}/${clave}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        } else {
+          // POST /api/alumnos
+          res = await fetch(API_URL, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
+          });
+        }
+
+        const data = await res.json();
+
+        if (!res.ok) {
+          throw new Error(data.mensaje || 'Error al procesar la solicitud');
+        }
+
+        showToast(esEdicion ? 'Alumno actualizado con éxito' : 'Alumno creado con éxito');
+        cerrarModales();
+        await cargarAlumnos();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    });
+
+    // Abrir Modal Eliminar
+    window.abrirEliminar = function(clave, nombre) {
+      claveParaEliminar = clave;
+      eliminarClave.textContent = clave;
+      eliminarNombre.textContent = nombre;
+      modalEliminar.classList.add('active');
+    };
+
+    // Confirmar Eliminar (DELETE /api/alumnos/{clave})
+    btnConfirmarEliminar.addEventListener('click', async () => {
+      if (claveParaEliminar === null) return;
+
+      try {
+        const res = await fetch(`${API_URL}/${claveParaEliminar}`, {
+          method: 'DELETE'
+        });
+
+        if (!res.ok && res.status !== 204) {
+          const data = await res.json();
+          throw new Error(data.mensaje || 'Error al eliminar alumno');
+        }
+
+        showToast('Alumno eliminado correctamente');
+        cerrarModales();
+        claveParaEliminar = null;
+        await cargarAlumnos();
+      } catch (err) {
+        showToast(err.message, 'error');
+      }
+    });
+
+    // Eventos Filtro
+    filtroTexto.addEventListener('input', renderTabla);
+    filtroSeccion.addEventListener('change', renderTabla);
+    document.getElementById('btnRecargar').addEventListener('click', cargarAlumnos);
+
+    // Carga inicial
+    cargarAlumnos();
+  </script>
+</body>
+</html>
