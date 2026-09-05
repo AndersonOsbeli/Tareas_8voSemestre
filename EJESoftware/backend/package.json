@@ -1,0 +1,14 @@
+{
+  "name": "backend-apis",
+  "version": "1.0.0",
+  "description": "Servidor Express con 10 APIs de 10 campos cada una",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "cors": "^2.8.5",
+    "express": "^4.21.2"
+  }
+}

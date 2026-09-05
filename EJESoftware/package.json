@@ -1,0 +1,20 @@
+{
+  "name": "proyecto-10-apis-fullstack",
+  "version": "1.0.0",
+  "description": "Proyecto Fullstack: Backend Express con 10 APIs (10 campos cada una) y Frontend React con menú y tablas interactivas",
+  "scripts": {
+    "backend": "cd backend && npm run dev",
+    "frontend": "cd frontend && npm run dev",
+    "start": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,cyan\" \"npm run backend\" \"npm run frontend\"",
+    "dev": "concurrently -n \"BACKEND,FRONTEND\" -c \"blue,cyan\" \"npm run backend\" \"npm run frontend\"",
+    "install:backend": "cd backend && npm install",
+    "install:frontend": "cd frontend && npm install",
+    "install:all": "npm install && cd backend && npm install && cd ../frontend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "keywords": ["express", "react", "apis", "rest", "vite", "fullstack"],
+  "author": "",
+  "license": "ISC"
+}
